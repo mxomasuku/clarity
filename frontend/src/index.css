@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --font-sans: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  /* HSL Colors */
+  --primary-hue: 220;
+  --accent-hue: 172;
+  
+  --primary: hsl(var(--primary-hue), 85%, 25%);
+  --primary-light: hsl(var(--primary-hue), 85%, 96%);
+  --primary-medium: hsl(var(--primary-hue), 60%, 45%);
+  
+  --accent: hsl(var(--accent-hue), 70%, 40%);
+  --accent-light: hsl(var(--accent-hue), 70%, 96%);
+  
+  --bg-main: hsl(var(--primary-hue), 30%, 98%);
+  --bg-card: #ffffff;
+  
+  --text-primary: hsl(var(--primary-hue), 40%, 12%);
+  --text-muted: hsl(var(--primary-hue), 15%, 45%);
+  --text-light: #ffffff;
+  
+  --border-color: hsl(var(--primary-hue), 20%, 90%);
+  
+  --success: hsl(142, 60%, 45%);
+  --success-light: hsl(142, 60%, 96%);
+  --warning: hsl(38, 92%, 50%);
+  --warning-light: hsl(38, 92%, 96%);
+  --danger: hsl(350, 80%, 50%);
+  --danger-light: hsl(350, 80%, 96%);
+  
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 8px 24px rgba(23, 43, 77, 0.06);
+  --shadow-lg: 0 16px 40px rgba(23, 43, 77, 0.1);
+  --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.03);
+  
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary-hue), 15%, 80%);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary-hue), 20%, 70%);
+}
+
+/* Glassmorphism & Premium Cards */
+.premium-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.premium-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.premium-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: hsl(var(--primary-hue), 25%, 85%);
+}
+
+.premium-card:hover::after {
+  opacity: 1;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Pulse Processing Animation */
+@keyframes processingPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(13, 148, 136, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(13, 148, 136, 0);
+  }
+}
+
+.processing-indicator {
+  animation: processingPulse 2s infinite;
+  border-radius: 50%;
+}
+
+/* Custom Micro-interactions */
+.interactive-hover {
+  transition: all 0.2s ease;
+}
+
+.interactive-hover:hover {
+  transform: scale(1.02);
+}
+
+/* Fade in entry */
+@keyframes fadeInEntry {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInEntry 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

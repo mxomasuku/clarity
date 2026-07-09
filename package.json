@@ -1,0 +1,12 @@
+{
+  "name": "clarity-platform",
+  "version": "1.0.0",
+  "description": "Clarity Health Healthcare Transparency Platform",
+  "scripts": {
+    "install-all": "npm install --prefix backend && npm install --prefix frontend",
+    "dev-backend": "npm run dev --prefix backend",
+    "dev-frontend": "npm run dev --prefix frontend",
+    "dev": "npx -y concurrently \"npm run dev-backend\" \"npm run dev-frontend\"",
+    "build-all": "npm run build --prefix backend && npm run build --prefix frontend"
+  }
+}
