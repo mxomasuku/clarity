@@ -16,6 +16,11 @@ RUN npm run build
 FROM node:20-alpine AS production
 WORKDIR /app
 
+# Runtime document readers:
+# - poppler-utils provides pdftotext for text-based PDFs.
+# - tesseract-ocr is a local fallback for image OCR when Cloud Vision is not configured.
+RUN apk add --no-cache poppler-utils tesseract-ocr tesseract-ocr-data-eng
+
 # Install production-only deps
 COPY package*.json ./
 RUN npm ci --omit=dev

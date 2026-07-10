@@ -3,6 +3,13 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { api, CaseDetailResponse } from '../services/api.js';
 import { FileText, Sparkles, MessageSquareHeart, HelpCircle, FileCheck, Stethoscope, ChevronLeft, AlertCircle, AlertTriangle } from 'lucide-react';
 
+type CaseDetailTab = 'documents' | 'summary' | 'explanation' | 'pathways' | 'questions' | 'second_opinion' | 'rate_doctor';
+
+const tabFromUrl = (value: string | null): CaseDetailTab => {
+  const allowedTabs: CaseDetailTab[] = ['documents', 'summary', 'explanation', 'pathways', 'questions', 'second_opinion', 'rate_doctor'];
+  return allowedTabs.includes(value as CaseDetailTab) ? value as CaseDetailTab : 'summary';
+};
+
 export const CaseDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -11,9 +18,7 @@ export const CaseDetailPage: React.FC = () => {
   const [data, setData] = useState<CaseDetailResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState<'documents' | 'summary' | 'explanation' | 'pathways' | 'questions' | 'second_opinion' | 'rate_doctor'>(
-    searchParams.get('tab') === 'documents' ? 'documents' : 'summary'
-  );
+  const [activeTab, setActiveTab] = useState<CaseDetailTab>(tabFromUrl(searchParams.get('tab')));
   const [requestingOpinion, setRequestingOpinion] = useState(false);
   const [checkedQuestions, setCheckedQuestions] = useState<Record<number, boolean>>({});
 
@@ -47,6 +52,10 @@ export const CaseDetailPage: React.FC = () => {
   useEffect(() => {
     fetchCaseDetail();
   }, [id]);
+
+  useEffect(() => {
+    setActiveTab(tabFromUrl(searchParams.get('tab')));
+  }, [searchParams]);
 
   const fetchCaseDetail = async () => {
     if (!id) return;

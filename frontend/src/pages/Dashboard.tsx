@@ -60,16 +60,29 @@ export const Dashboard: React.FC = () => {
     }
   };
 
+  const realCases = cases.filter(c => c.status !== 'pending_upload');
+  const activeCases = realCases.filter(c => c.status !== 'reviewed');
+  const aiReportCases = realCases.filter(c =>
+    c.status === 'completed' ||
+    c.status === 'second_opinion_requested' ||
+    c.status === 'reviewed'
+  );
+  const reviewedCases = realCases.filter(c => c.status === 'reviewed');
+
+  const openCase = (caseData?: Case, tab = 'summary') => {
+    if (!caseData) return;
+    navigate(`/cases/${caseData.id}${tab ? `?tab=${tab}` : ''}`);
+  };
+
   const getStats = () => {
-    const active = cases.filter(c => c.status !== 'reviewed').length;
-    const completed = cases.filter(c => c.status === 'completed' || c.status === 'reviewed').length;
-    const reviewed = cases.filter(c => c.status === 'reviewed').length;
+    const active = activeCases.length;
+    const completed = aiReportCases.length;
+    const reviewed = reviewedCases.length;
     return { active, completed, reviewed };
   };
 
   const stats = getStats();
-  const recentActivity = cases
-    .filter(c => c.status !== 'pending_upload')
+  const recentActivity = realCases
     .slice(0, 3);
 
   const formatActivityDate = (dateValue: string) =>
@@ -138,7 +151,13 @@ export const Dashboard: React.FC = () => {
 
       {/* KPI Stats Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px' }}>
-        <div style={{ background: 'white', padding: '20px 24px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '20px', boxShadow: 'var(--shadow-sm)' }}>
+        <button
+          onClick={() => openCase(activeCases[0], activeCases[0]?.status === 'processing' ? '' : 'summary')}
+          disabled={activeCases.length === 0}
+          aria-label="Open active recommendations"
+          className="interactive-hover"
+          style={{ background: 'white', padding: '20px 24px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '20px', boxShadow: 'var(--shadow-sm)', cursor: activeCases.length ? 'pointer' : 'default', textAlign: 'left', fontFamily: 'inherit', opacity: activeCases.length ? 1 : 0.7 }}
+        >
           <div style={{ background: 'var(--primary-light)', padding: '12px', borderRadius: '12px', color: 'var(--primary)' }}>
             <Clock size={24} />
           </div>
@@ -146,9 +165,15 @@ export const Dashboard: React.FC = () => {
             <div style={{ fontSize: '24px', fontWeight: 800 }}>{stats.active}</div>
             <div style={{ fontSize: '14px', color: 'var(--text-muted)' }}>Active Recommendations</div>
           </div>
-        </div>
+        </button>
 
-        <div style={{ background: 'white', padding: '20px 24px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '20px', boxShadow: 'var(--shadow-sm)' }}>
+        <button
+          onClick={() => openCase(aiReportCases[0], 'summary')}
+          disabled={aiReportCases.length === 0}
+          aria-label="Open generated AI reports"
+          className="interactive-hover"
+          style={{ background: 'white', padding: '20px 24px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '20px', boxShadow: 'var(--shadow-sm)', cursor: aiReportCases.length ? 'pointer' : 'default', textAlign: 'left', fontFamily: 'inherit', opacity: aiReportCases.length ? 1 : 0.7 }}
+        >
           <div style={{ background: 'var(--success-light)', padding: '12px', borderRadius: '12px', color: 'var(--success)' }}>
             <FileCheck2 size={24} />
           </div>
@@ -156,9 +181,15 @@ export const Dashboard: React.FC = () => {
             <div style={{ fontSize: '24px', fontWeight: 800 }}>{stats.completed}</div>
             <div style={{ fontSize: '14px', color: 'var(--text-muted)' }}>AI Reports Generated</div>
           </div>
-        </div>
+        </button>
 
-        <div style={{ background: 'white', padding: '20px 24px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '20px', boxShadow: 'var(--shadow-sm)' }}>
+        <button
+          onClick={() => openCase(reviewedCases[0], 'second_opinion')}
+          disabled={reviewedCases.length === 0}
+          aria-label="Open completed reviews"
+          className="interactive-hover"
+          style={{ background: 'white', padding: '20px 24px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '20px', boxShadow: 'var(--shadow-sm)', cursor: reviewedCases.length ? 'pointer' : 'default', textAlign: 'left', fontFamily: 'inherit', opacity: reviewedCases.length ? 1 : 0.7 }}
+        >
           <div style={{ background: 'hsl(280, 75%, 95%)', padding: '12px', borderRadius: '12px', color: 'hsl(280, 75%, 35%)' }}>
             <ArrowRightLeft size={24} />
           </div>
@@ -166,7 +197,7 @@ export const Dashboard: React.FC = () => {
             <div style={{ fontSize: '24px', fontWeight: 800 }}>{stats.reviewed}</div>
             <div style={{ fontSize: '14px', color: 'var(--text-muted)' }}>Completed Reviews</div>
           </div>
-        </div>
+        </button>
       </div>
 
       {/* Main Layout: Recent Cases and Activity Feed */}
@@ -179,7 +210,7 @@ export const Dashboard: React.FC = () => {
             <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)' }}>Loading cases...</div>
           ) : error ? (
             <div style={{ color: 'var(--danger)', padding: '20px 0' }}>{error}</div>
-          ) : cases.length === 0 ? (
+          ) : realCases.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '60px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
               <FileSpreadsheet size={48} color="var(--border-color)" />
               <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>No medical cases found</div>
@@ -203,18 +234,14 @@ export const Dashboard: React.FC = () => {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {cases.map((c) => {
+              {realCases.map((c) => {
                 const badge = getStatusBadge(c.status);
                 return (
                   <div
                     key={c.id}
                     className="interactive-hover"
                     onClick={() => {
-                      if (c.status === 'pending_upload') {
-                        navigate(`/upload/${c.id}`);
-                      } else {
-                        navigate(`/cases/${c.id}`);
-                      }
+                      openCase(c, c.status === 'processing' ? '' : 'summary');
                     }}
                     style={{
                       border: '1px solid var(--border-color)',
@@ -273,13 +300,18 @@ export const Dashboard: React.FC = () => {
                 Your upload and review activity will appear here after you process a document.
               </div>
             ) : recentActivity.map((c) => (
-              <div key={c.id} style={{ borderLeft: '2px solid var(--border-color)', paddingLeft: '16px', position: 'relative' }}>
+              <button
+                key={c.id}
+                onClick={() => openCase(c, c.status === 'processing' ? '' : 'summary')}
+                className="interactive-hover"
+                style={{ border: 'none', borderLeft: '2px solid var(--border-color)', padding: '0 0 0 16px', position: 'relative', background: 'transparent', textAlign: 'left', cursor: 'pointer', fontFamily: 'inherit' }}
+              >
                 <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: c.status === 'completed' ? 'var(--success)' : 'var(--accent)', position: 'absolute', left: '-5px', top: '6px' }}></div>
                 <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{formatActivityDate(c.createdAt)}</div>
                 <div style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)', marginTop: '2px' }}>
                   {getActivityCopy(c)}
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>

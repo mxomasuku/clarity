@@ -94,6 +94,44 @@ export const aiService = {
         'What lifestyle and medication changes will I need to maintain after the surgery to prevent new blockages from forming?'
       ];
     }
+    // Case 3: Gallstones / Laparoscopic Cholecystectomy
+    else if (textLower.includes('gallstone') || textLower.includes('cholecystectomy') || textLower.includes('laparoscopic')) {
+      summary = 'Your surgical recommendation appears to be laparoscopic cholecystectomy, a keyhole operation to remove the gallbladder when gallstones are causing symptoms, inflammation, or recurring attacks.';
+
+      explanation = 'Gallstones are hardened deposits that form inside the gallbladder. They can block the normal flow of bile and cause right upper abdominal pain, nausea, vomiting, fever, jaundice, or inflammation of the gallbladder. A laparoscopic cholecystectomy removes the gallbladder through small cuts using a camera and fine instruments. Most people can live normally without a gallbladder because bile can still flow from the liver into the intestine, though some people notice temporary digestion changes after fatty meals.';
+
+      pathways = [
+        {
+          title: 'Watchful Waiting And Symptom Control',
+          description: 'For mild or uncertain symptoms, a clinician may monitor the situation while using diet changes, pain control, and follow-up imaging or blood tests.',
+          benefits: 'Avoids an operation if symptoms are not clearly coming from gallstones or if the risks of surgery are high.',
+          risks: 'Gallstone attacks may return, and complications such as infection, pancreatitis, or bile duct blockage can occur.',
+          considerations: 'This is usually considered when gallstones are incidental or symptoms are mild, not when there is clear infection or repeated severe pain.'
+        },
+        {
+          title: 'Laparoscopic Cholecystectomy',
+          description: 'A surgeon removes the gallbladder through small incisions, usually with a short hospital stay and faster recovery than open surgery.',
+          benefits: 'Treats the source of recurrent gallstone symptoms and lowers the chance of future gallbladder attacks.',
+          risks: 'Risks include bleeding, infection, injury to the bile duct or nearby organs, anesthesia complications, and possible conversion to open surgery.',
+          considerations: 'This is commonly recommended for symptomatic gallstones, cholecystitis, or recurrent biliary colic.'
+        },
+        {
+          title: 'Open Surgery Or Specialist Referral',
+          description: 'Some complex cases need open surgery, bile duct imaging, ERCP, or referral to a specialist hepatobiliary team.',
+          benefits: 'Can be safer when anatomy is unclear, the gallbladder is severely inflamed, or stones may be in the bile duct.',
+          risks: 'Open surgery has a longer recovery and larger incision, while additional procedures carry their own risks.',
+          considerations: 'Ask whether blood tests, ultrasound findings, jaundice, pancreatitis, or bile duct stones change the plan.'
+        }
+      ];
+
+      questions = [
+        'What finding in my scan or blood tests makes gallbladder removal necessary now?',
+        'Is this an urgent operation, or can it be scheduled safely?',
+        'Do I have any signs of infection, pancreatitis, jaundice, or stones in the bile duct?',
+        'What are the chances this can be completed laparoscopically rather than converted to open surgery?',
+        'What symptoms after surgery should make me seek urgent care?'
+      ];
+    }
     // Generic fallback for uploaded documents that do not match a known clinical pattern.
     else {
       const noReadableText = textLower.includes('no readable text was extracted');
